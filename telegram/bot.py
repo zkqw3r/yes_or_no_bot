@@ -10,6 +10,10 @@ async def main():
     dp.include_router(main_router)
 
     logging.basicConfig(level=logging.INFO)
+    
+    if not cfg.TELEGRAM_TOKEN:
+        raise ValueError("TELEGRAM_TOKEN not found in environment variables")
+    
     bot = Bot(token=cfg.TELEGRAM_TOKEN)
 
     await bot.delete_webhook(drop_pending_updates=True)
