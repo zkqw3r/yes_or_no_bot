@@ -9,6 +9,9 @@ router = Router(name=__name__)
 
 @router.message()
 async def question(message: types.Message):
+    if not message.bot:
+        return
+    
     action_sender = ChatActionSender(bot=message.bot,
                                      chat_id=message.chat.id,
                                      interval=2,
