@@ -1,5 +1,6 @@
-from aiogram import Router, types
-from aiogram.enums import ChatAction
+from aiogram import Router, types, F
+from aiogram.enums import ChatAction, ChatType
+from aiogram.filters import Command
 from aiogram.utils.chat_action import ChatActionSender
 import main.main as main_func
 
@@ -7,8 +8,8 @@ import main.main as main_func
 router = Router(name=__name__)
 
 
-@router.message()
-async def question(message: types.Message):
+async def send_answer(message: types.Message):
+    """Отправляет ответ да/нет с гифкой"""
     if not message.bot:
         return
     
@@ -22,3 +23,15 @@ async def question(message: types.Message):
             await message.answer_animation(animation=gif, caption=answer)
         else:
             await message.answer("Извини, API временно недоступен. Попробуй позже.")
+
+
+# В группах работает только по команде /ask
+@router.message(Command("ask"), F.chat.type.in_({ChatType.GROUP, ChatType.SUPERGROUP}))
+async def ask_in_group(message: types.Message):
+    await send_answer(message)
+
+
+# В личке работает на любое сообщение (кроме команд)
+@router.message(F.chat.type == ChatType.PRIVATE)
+async def question_private(message: types.Message):
+    await send_answer(message)
