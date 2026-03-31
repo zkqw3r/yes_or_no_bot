@@ -15,4 +15,7 @@ async def question(message: types.Message):
                                      action=ChatAction.UPLOAD_VIDEO)
     async with action_sender:
         gif, answer = await main_func.yes_or_no()
-        await message.answer_animation(animation=gif, caption=answer)
+        if gif and answer:
+            await message.answer_animation(animation=gif, caption=answer)
+        else:
+            await message.answer("Извини, API временно недоступен. Попробуй позже.")
